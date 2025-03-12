@@ -1,3 +1,5 @@
+from sys import exit
+
 def vigenere_header(alphabet):
     return list(' ') + list(alphabet)
 
@@ -52,12 +54,41 @@ def decrypt_vigenere(key, cipher_text, alphabet):
             counter += 1
     return ''.join(paintext)
 
+def enc_menu(key, alphabet):
+    plaintext = input("Enter text for encryption: ")
+    return encrypt_vigenere(key, plaintext, alphabet)
 
-key = 'BLUESMURF'
-message = 'ONE SMALL STEP FOR MAN, ONE GIANT LEAP FOR MANKIND.'
-alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+def dec_menu(key, alphabet, encrypted_list):
+    for cipher_text in encrypted_list:
+        print(decrypt_vigenere(key, cipher_text, alphabet))
 
-print(message)
-encrypted = encrypt_vigenere(key, message, alphabet)
-print(encrypted)
-print(decrypt_vigenere(key, encrypted, alphabet))
+def dec_dump_menu(encrypted_list):
+    for cipher_text in encrypted_list:
+        print(cipher_text)
+
+def main():
+    encrypted_list = []
+    key = 'BLUESMURF'
+    message = 'ONE SMALL STEP FOR MAN, ONE GIANT LEAP FOR MANKIND.'
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+    menu = [
+        ['1) Encrypt', enc_menu, [key, alphabet]],
+        ['2) Decrypt', dec_menu, [key, alphabet, encrypted_list]],
+        ['3) Dump Decrypt', dec_dump_menu, [encrypted_list]],
+        ['4) Exit Program', exit, [0]]
+        ]
+
+    for _ in range(3):
+        encrypted_list.append(menu[0][1](*menu[0][2]))
+
+    menu[2][1](*menu[2][2])
+    menu[1][1](*menu[1][2])
+    menu[3][1](*menu[3][2])
+
+if __name__ == '__main__':
+    main()
+
+
+
+
