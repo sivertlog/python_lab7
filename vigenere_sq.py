@@ -54,9 +54,9 @@ def decrypt_vigenere(key, cipher_text, alphabet):
             counter += 1
     return ''.join(paintext)
 
-def enc_menu(key, alphabet):
+def enc_menu(key, alphabet, encrypted_list):
     plaintext = input("Enter text for encryption: ")
-    return encrypt_vigenere(key, plaintext, alphabet)
+    encrypted_list.append(encrypt_vigenere(key, plaintext, alphabet))
 
 def dec_menu(key, alphabet, encrypted_list):
     for cipher_text in encrypted_list:
@@ -73,18 +73,33 @@ def main():
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     menu = [
-        ['1) Encrypt', enc_menu, [key, alphabet]],
+        ['1) Encrypt', enc_menu, [key, alphabet, encrypted_list]],
         ['2) Decrypt', dec_menu, [key, alphabet, encrypted_list]],
         ['3) Dump Decrypt', dec_dump_menu, [encrypted_list]],
         ['4) Exit Program', exit, [0]]
         ]
 
-    for _ in range(3):
-        encrypted_list.append(menu[0][1](*menu[0][2]))
+    while True:
+        for menu_item in menu:
+            print(menu_item[0])
+        try:
+            choice = int(input("Enter a selection"))
+            if not (0 < choice <= len(menu)):
+                print("Improper choice, make a selection of 1-4")
+            else:
+                menu[choice-1][1](*menu[choice-1][2])
+        except ValueError as ve:
+            print("Improper choice, make a selection of 1-4")
+
+
+'''
+for _ in range(3):
+    encrypted_list.append(menu[0][1](*menu[0][2]))
 
     menu[2][1](*menu[2][2])
     menu[1][1](*menu[1][2])
     menu[3][1](*menu[3][2])
+    '''
 
 if __name__ == '__main__':
     main()
