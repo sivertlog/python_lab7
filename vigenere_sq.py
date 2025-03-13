@@ -17,7 +17,7 @@ def vigenere_sq_print(sq_list):
             print(f"{'|---'*len(row)}|")
 
 def letter_to_index(letter, alphabet):
-    return alphabet.index(letter.upper())
+    return alphabet.index(letter)
 
 def index_to_letter(index:int, alphabet:str):
     if 0 <= index < len(alphabet):
@@ -38,7 +38,7 @@ def encrypt_vigenere(key, plaintext, alphabet):
     for c in plaintext:
         if c == " ":
             cipher_text.append(' ')
-        elif c.upper() in alphabet:
+        elif c in alphabet:
             cipher_text.append(index_to_letter(vigenere_index(key[counter % len(key)], c, alphabet), alphabet))
             counter += 1
     return ''.join(cipher_text)
@@ -49,47 +49,67 @@ def decrypt_vigenere(key, cipher_text, alphabet):
     for c in cipher_text:
         if c == " ":
             paintext.append(' ')
-        elif c.upper() in alphabet:
+        elif c in alphabet:
             paintext.append(index_to_letter(undo_vigenere_index(key[counter % len(key)], c, alphabet), alphabet))
             counter += 1
     return ''.join(paintext)
 
+def add_key(key_list:list, alphabet):
+    while True:
+        new_key = input("Enter a new key: ").upper()
+        print(new_key)
+        if any(i not in alphabet for i in new_key):
+            print("Improper key, use only letters in the alphabet")
+        else:
+            key_list.append(new_key)
+            break
+
 def enc_menu(key, alphabet, encrypted_list):
-    plaintext = input("Enter text for encryption: ")
-    encrypted_list.append(encrypt_vigenere(key, plaintext, alphabet))
+    plaintext = input("Enter text for encryption: ").upper()
+
+    if len(encrypted_list) > 0:
+        #key_id cycles through the key list according to the last key used
+        key_id = ((encrypted_list[(len(encrypted_list) - 1)][1]) + 1) % len(key)
+        encrypted_list.append([(encrypt_vigenere(key[key_id], plaintext, alphabet)), key_id])
+    else:
+        encrypted_list.append([encrypt_vigenere(key[0], plaintext, alphabet), 0])
 
 def dec_menu(key, alphabet, encrypted_list):
-    for cipher_text in encrypted_list:
-        print(decrypt_vigenere(key, cipher_text, alphabet))
+    for i in range(len(encrypted_list)):
+        key_id = encrypted_list[i][1]
+        print(decrypt_vigenere(key[key_id], ''.join(encrypted_list[i][0]), alphabet))
 
 def dec_dump_menu(encrypted_list):
-    for cipher_text in encrypted_list:
-        print(cipher_text)
+    for i in range(len(encrypted_list)):
+        print(''.join(encrypted_list[i][0]))
 
 def main():
     encrypted_list = []
-    key = 'BLUESMURF'
-    message = 'ONE SMALL STEP FOR MAN, ONE GIANT LEAP FOR MANKIND.'
+    key_list = ['BLUESMURF']
+    #key = 'BLUESMURF'
+    #message = 'ONE SMALL STEP FOR MAN, ONE GIANT LEAP FOR MANKIND.'
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     menu = [
-        ['1) Encrypt', enc_menu, [key, alphabet, encrypted_list]],
-        ['2) Decrypt', dec_menu, [key, alphabet, encrypted_list]],
+        ['1) Encrypt', enc_menu, [key_list, alphabet, encrypted_list]],
+        ['2) Decrypt', dec_menu, [key_list, alphabet, encrypted_list]],
         ['3) Dump Decrypt', dec_dump_menu, [encrypted_list]],
-        ['4) Exit Program', exit, [0]]
+        ['4) Add Key', add_key, [key_list, alphabet]],
+        ['5) Exit Program', exit, [0]]
         ]
 
     while True:
         for menu_item in menu:
             print(menu_item[0])
+        print(encrypted_list)
         try:
             choice = int(input("Enter a selection"))
             if not (0 < choice <= len(menu)):
-                print("Improper choice, make a selection of 1-4")
+                print("Improper choice, make a selection of 1-" + str(len(menu)))
             else:
                 menu[choice-1][1](*menu[choice-1][2])
         except ValueError as ve:
-            print("Improper choice, make a selection of 1-4")
+            print("Improper choice, make a selection of 1-" + str(len(menu)))
 
 
 '''
@@ -103,7 +123,3 @@ for _ in range(3):
 
 if __name__ == '__main__':
     main()
-
-
-
-
