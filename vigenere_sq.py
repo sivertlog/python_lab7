@@ -60,9 +60,11 @@ def add_key(key_list:list, alphabet):
         print(new_key)
         if any(i not in alphabet for i in new_key):
             print("Improper key, use only letters in the alphabet")
-        else:
+        elif len(new_key) > 0:
             key_list.append(new_key)
             break
+        else:
+            print("No key detected")
 
 def enc_menu(key, alphabet, encrypted_list):
     plaintext = input("Enter text for encryption: ").upper()
@@ -83,11 +85,20 @@ def dec_dump_menu(encrypted_list):
     for i in range(len(encrypted_list)):
         print(''.join(encrypted_list[i][0]))
 
+def uber_dump(key_list, encrypted_list):
+    print()
+    print("Keys:")
+    for i in range(len(key_list)):
+        print(f"{i}: {key_list[i]}")
+    print()
+    print("Key:             Message")
+    for i in range(len(encrypted_list)):
+        print(f"{encrypted_list[i][1]}             {encrypted_list[i][0]}")
+    print()
+
 def main():
     encrypted_list = []
     key_list = ['BLUESMURF']
-    #key = 'BLUESMURF'
-    #message = 'ONE SMALL STEP FOR MAN, ONE GIANT LEAP FOR MANKIND.'
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     menu = [
@@ -98,10 +109,12 @@ def main():
         ['5) Exit Program', exit, [0]]
         ]
 
+    #menu.append(['6) Uber Dump(debug)', uber_dump, [key_list, encrypted_list]])
+
     while True:
         for menu_item in menu:
             print(menu_item[0])
-        print(encrypted_list)
+
         try:
             choice = int(input("Enter a selection"))
             if not (0 < choice <= len(menu)):
@@ -111,15 +124,6 @@ def main():
         except ValueError as ve:
             print("Improper choice, make a selection of 1-" + str(len(menu)))
 
-
-'''
-for _ in range(3):
-    encrypted_list.append(menu[0][1](*menu[0][2]))
-
-    menu[2][1](*menu[2][2])
-    menu[1][1](*menu[1][2])
-    menu[3][1](*menu[3][2])
-    '''
 
 if __name__ == '__main__':
     main()
